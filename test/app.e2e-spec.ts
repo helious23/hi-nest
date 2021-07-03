@@ -1,17 +1,26 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
+    // test 마다 app을 생성하지 않기 위해 beforeEach -> beforeAll 변경 : test movie 생성 후 남아 있음
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(
+      // test application 도 실제 applicatnio 과 동일한 환경설정 필요!
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
     await app.init();
   });
 
@@ -35,5 +44,16 @@ describe('AppController (e2e)', () => {
     it('DELETE', () => {
       return request(app.getHttpServer()).delete('/movies').expect(404);
     });
+  });
+
+  describe('/movies/:id', () => {
+    it('GET 200', () => {
+      return request(app.getHttpServer()).get('/movies/1').expect(200);
+    });
+    it('GET 404', () => {
+      return request(app.getHttpServer()).get('/movies/999').expect(404);
+    });
+    it.todo('Delete');
+    it.todo('PATCH');
   });
 });
