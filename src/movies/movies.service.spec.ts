@@ -64,8 +64,8 @@ describe('MoviesService', () => {
     it('should create a movie', () => {
       const beforeCreate = service.getAll().length;
       service.create({
-        title: 'Test Movie',
-        genres: ['test'],
+        title: 'New Test Movie',
+        genres: ['test', 'new'],
         year: 2000,
       });
       const afterCreate = service.getAll().length;

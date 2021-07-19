@@ -42,6 +42,7 @@ describe('AppController (e2e)', () => {
         .expect(201);
     });
     it('POST 400', () => {
+      // check for validation pipe
       return request(app.getHttpServer())
         .post('/movies')
         .send({
@@ -64,14 +65,23 @@ describe('AppController (e2e)', () => {
     it('GET 404', () => {
       return request(app.getHttpServer()).get('/movies/999').expect(404);
     });
-    it('PATCH', () => {
+    it('PATCH 200', () => {
       return request(app.getHttpServer())
         .patch('/movies/1')
         .send({ title: 'Updated Test Movie' })
         .expect(200);
     });
-    it('DELETE', () => {
+    it('PATCH 404', () => {
+      return request(app.getHttpServer())
+        .patch('/movies/999')
+        .send({ title: 'Updated Test Movie' })
+        .expect(404);
+    });
+    it('DELETE 200', () => {
       return request(app.getHttpServer()).delete('/movies/1').expect(200);
+    });
+    it('DELETE 404', () => {
+      return request(app.getHttpServer()).delete('/movies/999').expect(404);
     });
   });
 });
